@@ -1,0 +1,77 @@
+library(readr)
+bank<-bank_full_working
+
+# Attributes
+summary(bank$`age`)
+summary(bank$`job`)
+summary(bank$`marital`)
+summary(bank$`education`)
+summary(bank$`default`)
+summary(bank$`balance`)
+summary(bank$`housing`)
+summary(bank$`loan`)
+summary(bank$`contact`)
+summary(bank$`day`)
+summary(bank$`month`)
+summary(bank$`duration`)
+summary(bank$`campaign`)
+summary(bank$`pdays`)
+summary(bank$`previous`)
+summary(bank$`poutcome`)
+summary(bank$`subscribed`)
+
+# Transform False (no) and True (yes) into 1 or 0
+bank$default<-ifelse(bank$`default`=='no',0,
+                      ifelse(bank$`default`=='yes',1,NA))
+
+bank$housing<-ifelse(bank$`housing`=='no',0,
+                        ifelse(bank$`housing`=='yes',1,NA))
+
+bank$loan<-ifelse(bank$`loan`=='no',0,
+                          ifelse(bank$`loan`=='yes',1,NA))
+
+bank$subscribed<-ifelse(bank$`subscribed`=='no',0,
+                    ifelse(bank$`subscribed`=='yes',1,NA))
+
+# Test missing values, none of the columns has missing values
+
+sapply(bank,function(x)all(is.na(x)))
+
+
+# Histogram
+hist(bank$age,main='age',xlab='age')
+hist(bank$balance,main='balance',xlab='balance')
+hist(bank$day,main='day',xlab='day')
+hist(bank$campaign,main='campaign',xlab='campaign')
+hist(bank$pdays,main='pdays',xlab='pdays')
+hist(bank$previous,main='previous',xlab='previous')
+hist(bank$duration,main='duration',xlab='duration')
+
+
+#boxplots
+boxplot(age ~ subscribed, data = bank, ylab = "Age")
+boxplot(balance ~ subscribed, data = bank, ylab = "Annual Income")
+boxplot(day ~ subscribed, data = bank, ylab = "Day")
+boxplot(duration ~ subscribed, data = bank, ylab = "Duration")
+boxplot(campaign ~ subscribed, data = bank, ylab = "Campaign")
+boxplot(pdays ~ subscribed, data = bank, ylab = "Pdays")
+boxplot(previous ~ subscribed, data = bank, ylab = "Previous")
+
+
+#create a new file containing numeric attributes only called bankx containing the following (age, balance, day, duration, campaign, pdays, previous)
+#also the output variable was added and converted to numeric
+
+bankx<- bank[, c("age", "balance", "day","duration","campaign","pdays","previous","subscribed")]
+
+#apply PCA principals
+
+bankpcs <-bankx[,1:7]
+bank.pca.rawdata <- prcomp(bankpcs, scale = FALSE, center= FALSE)
+bank.pca.rawdata
+cor(bankpcs)
+
+#all 7 numeric attributes have a STD>1.  None have a strong positive correlation as the strongest was 0.45 (previous and pdays)
+
+
+
+
